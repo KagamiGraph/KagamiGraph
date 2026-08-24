@@ -14,15 +14,15 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 py-6 px-4 space-y-1">
-        <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-medium bg-neutral-900 border border-neutral-800 text-neutral-50">
+        <a href="/" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-neutral-400 hover:text-neutral-50 hover:bg-neutral-900/50 transition-colors">
           <HardDriveUpload className="w-4 h-4 text-neutral-400" />
           Data Ingestion
         </a>
-        <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-neutral-400 hover:text-neutral-50 hover:bg-neutral-900/50 transition-colors">
+        <a href="/" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-neutral-400 hover:text-neutral-50 hover:bg-neutral-900/50 transition-colors">
           <Users className="w-4 h-4" />
           Discovered Personas
         </a>
-        <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-neutral-400 hover:text-neutral-50 hover:bg-neutral-900/50 transition-colors">
+        <a href="/simulate" className="flex items-center gap-3 px-3 py-2 text-sm font-medium bg-neutral-900 border border-neutral-800 text-neutral-50">
           <LineChart className="w-4 h-4" />
           Simulations
         </a>
