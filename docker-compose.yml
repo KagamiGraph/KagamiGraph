@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # Relational Database for Users, Projects, Metadata
+  postgres:
+    image: postgres:15-alpine
+    container_name: kagamigraph-postgres
+    environment:
+      POSTGRES_USER: kagamigraph
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: kagamigraph_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Vector Database for Graph-RAG / High-dimensional Behavioral Data
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: kagamigraph-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  qdrant_data:

@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pydantic
+qdrant-client
+langgraph
+langchain
+langchain-openai
+umap-learn
+hdbscan
+scikit-learn
+sentence-transformers
