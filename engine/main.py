@@ -16,23 +16,44 @@ class SimulationRequest(BaseModel):
 def health_check():
     return {"status": "ok", "message": "KagamiGraph Python AI Worker is running"}
 
+from clustering import PersonaClusterer
+
+# Initialize the clustering engine (loads the local embedding model)
+clusterer = PersonaClusterer()
+
 class IngestionRequest(BaseModel):
     project_id: str
     documents: list[str]
+    min_cluster_size: int = 3
 
 @app.post("/api/v1/ai/ingest")
 def ingest_data(request: IngestionRequest):
-    # 1. Embed documents using SentenceTransformers
-    # 2. Store in Qdrant Vector DB
-    # 3. Run UMAP + HDBSCAN to discover personas
+    """
+    Ingests raw customer data (interviews, tickets) and automatically extracts Personas
+    using Vector Embeddings + UMAP Dimensionality Reduction + HDBSCAN Clustering.
+    """
+    if not request.documents:
+        return {"status": "error", "message": "No documents provided"}
+        
+    print(f"Ingesting project {request.project_id}...")
+    
+    # 1 & 2 & 3. Run the ML pipeline to discover personas
+    results = clusterer.discover_personas(
+        documents=request.documents, 
+        min_cluster_size=request.min_cluster_size
+    )
+    
+    # In a full implementation, we would now:
+    # 1. Use an LLM to automatically generate a "Summary Description" of each persona cluster
+    # 2. Store the embeddings in Qdrant for the LangGraph agents to query later
+    
     return {
         "status": "success",
-        "message": f"Ingested {len(request.documents)} documents. Discovered 3 personas.",
-        "personas": [
-            {"id": "p1", "description": "Frustrated Enterprise Admins"},
-            {"id": "p2", "description": "Confused New Users"},
-            {"id": "p3", "description": "Power Users Requesting Features"}
-        ]
+        "message": f"Successfully processed {len(request.documents)} documents.",
+        "project_id": request.project_id,
+        "discovered_personas_count": len(results["personas"]),
+        "outliers_count": len(results["outliers"]),
+        "personas": results["personas"]
     }
 
 @app.post("/api/v1/ai/simulate")
