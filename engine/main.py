@@ -36,16 +36,27 @@ def ingest_data(request: IngestionRequest):
     }
 
 @app.post("/api/v1/ai/simulate")
-def run_simulation(request: SimulationRequest):
-    # This is where we will hook up LangGraph and our local LLM (e.g., Llama 3)
-    # 1. Retrieve persona context from Qdrant
-    # 2. Run LangGraph reflection agents
-    # 3. Return grounded response
+async def run_simulation(request: SimulationRequest):
+    from agent import agent_app
+    
+    # Initialize the LangGraph state
+    initial_state = {
+        "persona_id": request.persona_id,
+        "question": request.prompt,
+        "persona_context": "",
+        "reflection": "",
+        "response": "",
+        "messages": []
+    }
+    
+    # Run the graph (this triggers retrieve -> reflect -> respond)
+    final_state = await agent_app.ainvoke(initial_state)
     
     return {
         "status": "success",
-        "response": f"Simulated response for {request.persona_id} based on {len(request.context_data)} grounded data points.",
-        "citations": []
+        "response": final_state["response"],
+        "reflection": final_state["reflection"],
+        "citations": ["Mock DB Row #1"]
     }
 
 if __name__ == "__main__":
